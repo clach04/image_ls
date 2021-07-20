@@ -42,6 +42,7 @@ def bytesize2human_ls_en(num):
 
 
 def doit(dir_name):
+    counter = 0  # file counter, currently ignores directories
     dir_name = os.path.abspath(dir_name)
     glob_search_str = os.path.join(glob.escape(dir_name), '*')  # NOTE escape maybe Py3 only?
     print(repr(dir_name))
@@ -52,6 +53,7 @@ def doit(dir_name):
         if os.path.isdir(filename):
             # skip directories (TODO consider displaying them?)
             continue
+        counter += 1
         # TODO grayscale
         # TODO file timestamp?
         # filesize, resolution, format - mode/bit-depth - num colors
@@ -101,6 +103,7 @@ def doit(dir_name):
         print('%r' % im.info)  # look for Orientation - https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.info
         """
     #print('%r' % dir(im))
+    print('%d files' % counter)
 
 
 def main(argv=None):
