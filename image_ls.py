@@ -6,6 +6,15 @@
 import glob
 import os
 import sys
+from zipfile import ZipFile
+
+try:
+    from cStringIO import StringIO as FakeFile
+except ImportError:
+    try:
+        from StringIO import StringIO as FakeFile
+    except ImportError:
+        from io import BytesIO as FakeFile  # py3
 
 # import Pillow
 try:
@@ -47,7 +56,7 @@ def doit(dir_name):
     glob_search_str = os.path.join(glob.escape(dir_name), '*')  # NOTE escape maybe Py3 only?
     print(repr(dir_name))
     file_list = glob.glob(glob_search_str)
-    # TODO natsort file_list
+    file_list.sort()  # TODO natsort file_list
     print('%8s %10s %5s %7s %s %s' % ('size', 'res', 'fmt', 'depth', '#col', 'filename'))
     for filename in file_list:
         if os.path.isdir(filename):
@@ -60,7 +69,7 @@ def doit(dir_name):
         #print('%r' % filename)
         #print('\t%r' % os.path.basename(filename))
         """
-        # f is a file-like object. 
+        # f is a file-like object.
         old_file_position = f.tell()
         f.seek(0, os.SEEK_END)
         file_size = f.tell()
@@ -106,6 +115,65 @@ def doit(dir_name):
     print('%d files' % counter)
 
 
+def doit_zip(zip_filename):
+    counter = 0  # file counter, currently ignores directories
+    zip_filename = os.path.abspath(zip_filename)
+    print(repr(zip_filename))
+    arch = ZipFile(zip_filename, 'r')
+    file_list = arch.namelist()
+    file_list.sort()  # TODO natsort file_list
+    print('%8s %10s %5s %7s %s %s' % ('size', 'res', 'fmt', 'depth', '#col', 'filename'))
+    for filename in file_list:
+        if filename.endswith('/'):
+            # skip directories (TODO consider displaying them?)
+            continue
+        file_contents = arch.read(filename)  # read into memory
+        file_size = len(file_contents) ## FIXME lookup metadata from arch
+        file_ptr = FakeFile(file_contents)
+        if filename.startswith('/'):
+            # NOTE unix style path
+            # TODO win too
+            filename = filename[1:]
+
+        counter += 1
+
+        # TODO grayscale
+        # TODO file timestamp?
+        # filesize, resolution, format - mode/bit-depth - num colors
+        #print('%r' % filename)
+        #print('\t%r' % os.path.basename(filename))
+        """
+        # f is a file-like object.
+        old_file_position = f.tell()
+        f.seek(0, os.SEEK_END)
+        file_size = f.tell()
+        f.seek(old_file_position, os.SEEK_SET)
+        """
+        # os.path.getsize(filename)
+        try:
+            im = Image.open(file_ptr)
+            colour_count = len(set(im.getdata()))  # essentially number of colors
+            if colour_count >= 1000:
+                colour_count_str = '>999'
+            else:
+                colour_count_str = '%4d' % colour_count
+            format_str = '%4s-%d' % (im.mode, mode_to_bpp[im.mode])
+            image_size_str = '%5dx%d' % im.size  # width, height
+            im_format = im.format
+        except UnidentifiedImageError:
+            # FIXME get lengths correct
+            image_size_str = ''
+            im_format = '???'
+            format_str = ''
+            colour_count_str = '    '
+
+        #filename_basename = os.path.basename(filename)  # for zip file, this will hide paths
+        filename_basename = filename
+        print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_size), image_size_str, im_format, format_str, colour_count_str, filename_basename))
+    arch.close()
+    print('%d files' % counter)
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv
@@ -117,7 +185,13 @@ def main(argv=None):
         dir_name = argv[1]
     except IndexError:
         dir_name = '.'
-    doit(dir_name)
+
+    # FIXME merge and refactor doit() and doit_zip()
+    if os.path.isdir(dir_name):
+        doit(dir_name)
+    else:
+        # Assume a zip file
+        doit_zip(dir_name)
 
     return 0
 
