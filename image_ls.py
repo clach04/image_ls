@@ -20,6 +20,7 @@ except ImportError:
 try:
     # Pillow and PIL
     import PIL  # http://www.pythonware.com/products/pil/
+    import PIL.ExifTags
     from PIL import Image  # http://www.pythonware.com/products/pil/
     try:
         from PIL import UnidentifiedImageError  # PIL.VERSION missing, PIL.PILLOW_VERSION == '7.1.2'
@@ -70,6 +71,34 @@ try:
 except AttributeError:
     def glob_escape(in_str):
         return in_str  # i.e. not implemented!
+
+exif_tag_names_to_numbers = {PIL.ExifTags.TAGS[x]:x for x in PIL.ExifTags.TAGS}
+TAG_DATETIME_ORIGINAL = exif_tag_names_to_numbers['DateTimeOriginal']  # 36867
+TAG_DATETIME_DIGITIZED = exif_tag_names_to_numbers['DateTimeDigitized']  # 36868
+TAG_SUBSECTIME_ORIGINAL = exif_tag_names_to_numbers['SubsecTimeOriginal']  # 37521
+
+def get_exif_original_date(image):
+    """
+    returns (string of) the DateTimeOriginal/DateTimeDigitized exif data from the given PIL/Pillow Image file
+    """
+    try:
+        # NOTE: using old "private" method because new public method
+        #       doesn't include this tag. It does include 306 "DateTime"
+        #       though, but "DateTime" might differ from "DateTimeOriginal"
+        # pylint: disable-next=protected-access
+        date_created = image._getexif().get(TAG_DATETIME_ORIGINAL)
+        if not date_created:
+            date_created = image._getexif().get(TAG_DATETIME_DIGITIZED)
+        if date_created:
+            # pylint: disable-next=protected-access
+            date_created += "." + image._getexif().get(
+                TAG_SUBSECTIME_ORIGINAL, ""
+            ).zfill(3)
+    except (UnidentifiedImageError, AttributeError):
+        print("unable to parse '%s'", filepath)
+        return None
+
+    return date_created
 
 
 option_accurate_colour_count = False
@@ -123,6 +152,7 @@ def doit(dir_name):
             colour_count_str = '    '
 
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_info.st_size), image_size_str, im_format, format_str, colour_count_str, os.path.basename(filename)))
+        print('\t\t\t\t\t%s' % get_exif_original_date(im))
         """
         print('%r' % im)
         print('%r' % file_info.st_size)
