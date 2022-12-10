@@ -63,6 +63,7 @@ def bytesize2human_ls_en(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
 
+option_accurate_colour_count = False
 
 def doit(dir_name):
     counter = 0  # file counter, currently ignores directories
@@ -93,7 +94,11 @@ def doit(dir_name):
         file_info = os.stat(filename)  # try and retain py2 support, so skip Python3 pathlib
         try:
             im = Image.open(filename)
-            colour_count = len(set(im.getdata()))  # essentially number of colors - processes all image data (which is expensive)
+            if option_accurate_colour_count:
+                # processes all image data (which is expensive)
+                colour_count = len(set(im.getdata()))  # essentially number of colors
+            else:
+                colour_count = pow(2, mode_to_bpp[im.mode])  # max possible (might not all be used)
             if colour_count >= 1000:
                 colour_count_str = '>999'
             else:
@@ -167,7 +172,11 @@ def doit_zip(zip_filename):
         # os.path.getsize(filename)
         try:
             im = Image.open(file_ptr)
-            colour_count = len(set(im.getdata()))  # essentially number of colors
+            if option_accurate_colour_count:
+                # processes all image data (which is expensive)
+                colour_count = len(set(im.getdata()))  # essentially number of colors
+            else:
+                colour_count = pow(2, mode_to_bpp[im.mode])  # max possible (might not all be used)
             if colour_count >= 1000:
                 colour_count_str = '>999'
             else:
