@@ -73,9 +73,15 @@ except AttributeError:
         return in_str  # i.e. not implemented!
 
 exif_tag_names_to_numbers = {PIL.ExifTags.TAGS[x]:x for x in PIL.ExifTags.TAGS}
+exif_gps_tag_names_to_numbers = {PIL.ExifTags.GPSTAGS[x]:x for x in PIL.ExifTags.GPSTAGS}
 TAG_DATETIME_ORIGINAL = exif_tag_names_to_numbers['DateTimeOriginal']  # 36867
 TAG_DATETIME_DIGITIZED = exif_tag_names_to_numbers['DateTimeDigitized']  # 36868
 TAG_SUBSECTIME_ORIGINAL = exif_tag_names_to_numbers['SubsecTimeOriginal']  # 37521
+TAG_GPSINFO = exif_tag_names_to_numbers['GPSInfo']
+
+def get_exif_gpsinfo(image):
+	gps_info = image._getexif().get(TAG_GPSINFO)
+	return gps_info
 
 def get_exif_original_date(image):
     """
@@ -100,6 +106,26 @@ def get_exif_original_date(image):
 
     return date_created
 
+
+def dump_gps_exif(image):
+	tmp_exif_dict = image._getexif().get(TAG_GPSINFO)
+	exif_dict = {
+		PIL.ExifTags.GPSTAGS[x]:tmp_exif_dict[x]
+		for x in tmp_exif_dict
+	}
+	#return exif_dict
+	import json
+	return json.dumps(exif_dict, indent=4)
+
+def dump_all_exif(image):
+	tmp_exif_dict = image._getexif()
+	exif_dict = {
+		PIL.ExifTags.TAGS[x]:tmp_exif_dict[x]
+		for x in tmp_exif_dict
+	}
+	#return exif_dict
+	import json
+	return json.dumps(exif_dict, indent=4)
 
 option_accurate_colour_count = False
 
@@ -153,6 +179,10 @@ def doit(dir_name):
 
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_info.st_size), image_size_str, im_format, format_str, colour_count_str, os.path.basename(filename)))
         print('\t\t\t\t\t%s' % get_exif_original_date(im))
+        print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
+        print('\t\t\t\t\t%s' % im._getexif())
+        print('\t\t\t\t\t%s' % dump_all_exif(im))
+        print('\t\t\t\t\t%s' % dump_gps_exif(im))
         """
         print('%r' % im)
         print('%r' % file_info.st_size)
