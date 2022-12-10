@@ -19,10 +19,16 @@ except ImportError:
 # import Pillow
 try:
     # Pillow and PIL
-    from PIL import Image, UnidentifiedImageError  # http://www.pythonware.com/products/pil/
+    #from PIL import Image, UnidentifiedImageError  # http://www.pythonware.com/products/pil/
+    from PIL import Image  # http://www.pythonware.com/products/pil/
 except ImportError:
     import Image  # Older namespace - http://www.pythonware.com/products/pil/
 
+"""
+class UnidentifiedImageError (OSError):
+	pass
+"""
+UnidentifiedImageError = OSError  # Python3 PIL.VERSION == '1.1.7' and  PIL.PILLOW_VERSION == '5.1.0'
 
 # See https://pillow.readthedocs.io/en/stable/handbook/concepts.html
 # from https://stackoverflow.com/questions/1996577/how-can-i-get-the-depth-of-a-jpg-file
