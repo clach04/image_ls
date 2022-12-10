@@ -21,9 +21,13 @@ Alternatively, install os packages instead of PyPi packages
 
 ### Example
 
+Sample media:
+
   * https://github.com/clach04/sample_reading_media/tree/main/images/bobby_make_believe
 	* https://github.com/clach04/sample_reading_media/releases/tag/v0.2
   * https://github.com/recurser/exif-orientation-examples
+
+Download and run:
 
 	wget https://github.com/clach04/sample_reading_media/releases/download/v0.2/sample_reading_media.zip
 	mkdir sample_reading_media
