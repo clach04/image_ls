@@ -67,7 +67,7 @@ def bytesize2human_ls_en(num):
 def doit(dir_name):
     counter = 0  # file counter, currently ignores directories
     dir_name = os.path.abspath(dir_name)
-    glob_search_str = os.path.join(glob.escape(dir_name), '*')  # NOTE escape maybe Py3 only?
+    glob_search_str = os.path.join(glob.escape(dir_name), '*')  # NOTE escape maybe Py3 only? - New in version 3.4.
     print(repr(dir_name))
     file_list = glob.glob(glob_search_str)
     file_list.sort()  # TODO natsort file_list
@@ -93,7 +93,7 @@ def doit(dir_name):
         file_info = os.stat(filename)  # try and retain py2 support, so skip Python3 pathlib
         try:
             im = Image.open(filename)
-            colour_count = len(set(im.getdata()))  # essentially number of colors
+            colour_count = len(set(im.getdata()))  # essentially number of colors - processes all image data (which is expensive)
             if colour_count >= 1000:
                 colour_count_str = '>999'
             else:
@@ -129,6 +129,7 @@ def doit(dir_name):
     print('%d files' % counter)
 
 
+# FIXME refactor, e.g. doit_zip() image open and processing code duplicates doit()
 def doit_zip(zip_filename):
     counter = 0  # file counter, currently ignores directories
     zip_filename = os.path.abspath(zip_filename)
