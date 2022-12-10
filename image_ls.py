@@ -36,6 +36,7 @@ try:
     UnidentifiedImageError
 except NameError:
     UnidentifiedImageError = OSError  # Python3 PIL.VERSION == '1.1.7' and  PIL.PILLOW_VERSION == '5.1.0'
+    UnidentifiedImageError = IOError  # Python2 PIL.VERSION missing, PIL.PILLOW_VERSION == '6.2.2'
     # NOTE this workaround also seems to work for PIL.PILLOW_VERSION == '7.1.2'
 
 # See https://pillow.readthedocs.io/en/stable/handbook/concepts.html
@@ -63,12 +64,20 @@ def bytesize2human_ls_en(num):
             return "%3.1f%s" % (num, x)
         num /= 1024.0
 
+
+try:
+    glob_escape = glob.escape
+except AttributeError:
+    def glob_escape(in_str):
+        return in_str  # i.e. not implemented!
+
+
 option_accurate_colour_count = False
 
 def doit(dir_name):
     counter = 0  # file counter, currently ignores directories
     dir_name = os.path.abspath(dir_name)
-    glob_search_str = os.path.join(glob.escape(dir_name), '*')  # NOTE escape maybe Py3 only? - New in version 3.4.
+    glob_search_str = os.path.join(glob_escape(dir_name), '*')  # NOTE escape maybe Py3 only? - New in version 3.4.
     print(repr(dir_name))
     file_list = glob.glob(glob_search_str)
     file_list.sort()  # TODO natsort file_list
