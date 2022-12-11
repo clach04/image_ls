@@ -152,12 +152,17 @@ def dump_gps_exif(image):
 def dump_all_exif(image):
 	tmp_exif_dict = image._getexif()
 	exif_dict = {
-		PIL.ExifTags.TAGS[x]:tmp_exif_dict[x]
+		PIL.ExifTags.TAGS.get(x, x):tmp_exif_dict[x]  # handle case where EXIF magic number is not known to PIL/Pillow
 		for x in tmp_exif_dict
 	}
 	#return exif_dict
 	import json
-	return json.dumps(exif_dict, indent=4)
+	#from pprint import pprint
+	#pprint(exif_dict)
+	#del exif_dict['MakerNote']  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+	import base64
+	exif_dict['MakerNote'] = base64.encodestring(exif_dict['MakerNote'])  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+	return json.dumps(exif_dict, indent=4, sort_keys=True)
 
 
 option_accurate_colour_count = False
@@ -224,6 +229,7 @@ def doit(dir_name):
 
             gps_info = get_exif_gpsinfo(im)
             if gps_info:
+                #print('\t\t\t\t\t%r' % (gps_info,))
                 """
                 print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
                 print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
