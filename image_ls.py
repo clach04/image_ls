@@ -208,15 +208,16 @@ def doit(dir_name):
             format_str = '%4s-%d' % (im.mode, mode_to_bpp[im.mode])
             image_size_str = '%5dx%d' % im.size  # width, height
             im_format = im.format
+            exif_dict = im._getexif()
         except UnidentifiedImageError:
             # FIXME get lengths correct
+            im = exif_dict = None
             image_size_str = ''
             im_format = '???'
             format_str = ''
             colour_count_str = '    '
 
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_info.st_size), image_size_str, im_format, format_str, colour_count_str, os.path.basename(filename)))
-        exif_dict = im._getexif()
         if exif_dict:
             #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
             #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
