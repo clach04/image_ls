@@ -77,11 +77,17 @@ exif_gps_tag_names_to_numbers = {PIL.ExifTags.GPSTAGS[x]:x for x in PIL.ExifTags
 TAG_DATETIME_ORIGINAL = exif_tag_names_to_numbers['DateTimeOriginal']  # 36867
 TAG_DATETIME_DIGITIZED = exif_tag_names_to_numbers['DateTimeDigitized']  # 36868
 TAG_SUBSECTIME_ORIGINAL = exif_tag_names_to_numbers['SubsecTimeOriginal']  # 37521
+TAG_MAKE = exif_tag_names_to_numbers['Make']
+TAG_MODEL = exif_tag_names_to_numbers['Model']
 TAG_GPSINFO = exif_tag_names_to_numbers['GPSInfo']
 TAG_GPS_GPSLONGITUDEREF = exif_gps_tag_names_to_numbers['GPSLongitudeRef']
 TAG_GPS_GPSLONGITUDE = exif_gps_tag_names_to_numbers['GPSLongitude']
 TAG_GPS_GPSLATITUDEREF = exif_gps_tag_names_to_numbers['GPSLatitudeRef']
 TAG_GPS_GPSLATITUDE = exif_gps_tag_names_to_numbers['GPSLatitude']
+"""
+for x in exif_tag_names_to_numbers:
+    print(x)
+"""
 
 def get_exif_gpsinfo(image):
 	gps_info = image._getexif().get(TAG_GPSINFO)
@@ -204,6 +210,10 @@ def doit(dir_name):
             colour_count_str = '    '
 
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_info.st_size), image_size_str, im_format, format_str, colour_count_str, os.path.basename(filename)))
+        exif_dict = im._getexif()
+        if exif_dict:
+            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
+            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
         print('\t\t\t\t\t%s' % get_exif_original_date(im))
         #print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
         #print('\t\t\t\t\t%s' % im._getexif())
