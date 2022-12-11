@@ -230,18 +230,22 @@ def doit(dir_name):
 
             gps_info = get_exif_gpsinfo(im)
             if gps_info:
-                #print('\t\t\t\t\t%r' % (gps_info,))
-                """
-                print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
-                print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
-                print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
-                print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
-                print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
-                """
+                try:
+                    #print('\t\t\t\t\t%r' % (gps_info,))
+                    """
+                    print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
+                    print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                    print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                    print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                    print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                    """
 
-                print('\t\t\t\t\t%r' % (
-                    (decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]), decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF])),
-                    ))
+                    print('\t\t\t\t\t%r' % (
+                        (decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]), decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF])),
+                        ))
+                except KeyError:
+                    pass
+                    # Partial or missing GPS information
 
         """
         print('%r' % im)
