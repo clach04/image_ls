@@ -106,6 +106,7 @@ def get_exif_original_date(image):
         if not date_created:
             date_created = image._getexif().get(TAG_DATETIME_DIGITIZED)
         if date_created:
+            date_created = date_created.replace(':', '-', 2)  # replace date (only) seperator
             # pylint: disable-next=protected-access
             date_created += "." + image._getexif().get(
                 TAG_SUBSECTIME_ORIGINAL, ""
