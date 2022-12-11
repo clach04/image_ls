@@ -213,8 +213,9 @@ def doit(dir_name):
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_info.st_size), image_size_str, im_format, format_str, colour_count_str, os.path.basename(filename)))
         exif_dict = im._getexif()
         if exif_dict:
-            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
-            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
+            #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
+            #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
+            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE) + ' ' + exif_dict.get(TAG_MODEL),))
         print('\t\t\t\t\t%s' % get_exif_original_date(im))
         #print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
         #print('\t\t\t\t\t%s' % im._getexif())
