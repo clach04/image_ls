@@ -31,7 +31,7 @@ except ImportError:
 
 """
 class UnidentifiedImageError (OSError):
-	pass
+    pass
 """
 try:
     UnidentifiedImageError
@@ -90,8 +90,8 @@ for x in exif_tag_names_to_numbers:
 """
 
 def get_exif_gpsinfo(image):
-	gps_info = image._getexif().get(TAG_GPSINFO)
-	return gps_info
+    gps_info = image._getexif().get(TAG_GPSINFO)
+    return gps_info
 
 def get_exif_original_date(image):
     """
@@ -119,50 +119,50 @@ def get_exif_original_date(image):
 
 
 def printable_coords(coords, ref):
-	"""
-	GPSLatitude, GPSLatitudeRef
-	GPSLongitude, GPSLongitudeRef
-	"""
-	result = u"""%d\u00b0%d'%f"%s""" % ((float(coords[0][0]) / float(coords[0][1])) , (float(coords[1][0]) / float(coords[1][1])), (float(coords[2][0]) / float(coords[2][1])), ref)
-	return result
+    """
+    GPSLatitude, GPSLatitudeRef
+    GPSLongitude, GPSLongitudeRef
+    """
+    result = u"""%d\u00b0%d'%f"%s""" % ((float(coords[0][0]) / float(coords[0][1])) , (float(coords[1][0]) / float(coords[1][1])), (float(coords[2][0]) / float(coords[2][1])), ref)
+    return result
 
 
 def decimal_coords(coords, ref):
-	"""
-	GPSLatitude, GPSLatitudeRef
-	GPSLongitude, GPSLongitudeRef
-	"""
-	decimal_degrees = (float(coords[0][0]) / float(coords[0][1]))  + ((float(coords[1][0]) / float(coords[1][1])) / 60 )+ ((float(coords[2][0]) / float(coords[2][1])) / 3600 )
-	if ref == 'S' or ref == 'W':
-		decimal_degrees = -decimal_degrees
-	return decimal_degrees
+    """
+    GPSLatitude, GPSLatitudeRef
+    GPSLongitude, GPSLongitudeRef
+    """
+    decimal_degrees = (float(coords[0][0]) / float(coords[0][1]))  + ((float(coords[1][0]) / float(coords[1][1])) / 60 )+ ((float(coords[2][0]) / float(coords[2][1])) / 3600 )
+    if ref == 'S' or ref == 'W':
+        decimal_degrees = -decimal_degrees
+    return decimal_degrees
 
 
 def dump_gps_exif(image):
-	tmp_exif_dict = image._getexif().get(TAG_GPSINFO, {})
-	exif_dict = {
-		PIL.ExifTags.GPSTAGS[x]:tmp_exif_dict[x]
-		for x in tmp_exif_dict
-	}
-	#return exif_dict
-	import json
-	return json.dumps(exif_dict, indent=4)
+    tmp_exif_dict = image._getexif().get(TAG_GPSINFO, {})
+    exif_dict = {
+        PIL.ExifTags.GPSTAGS[x]:tmp_exif_dict[x]
+        for x in tmp_exif_dict
+    }
+    #return exif_dict
+    import json
+    return json.dumps(exif_dict, indent=4)
 
 
 def dump_all_exif(image):
-	tmp_exif_dict = image._getexif()
-	exif_dict = {
-		PIL.ExifTags.TAGS.get(x, x):tmp_exif_dict[x]  # handle case where EXIF magic number is not known to PIL/Pillow
-		for x in tmp_exif_dict
-	}
-	#return exif_dict
-	import json
-	#from pprint import pprint
-	#pprint(exif_dict)
-	#del exif_dict['MakerNote']  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
-	import base64
-	exif_dict['MakerNote'] = base64.encodestring(exif_dict['MakerNote'])  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
-	return json.dumps(exif_dict, indent=4, sort_keys=True)
+    tmp_exif_dict = image._getexif()
+    exif_dict = {
+        PIL.ExifTags.TAGS.get(x, x):tmp_exif_dict[x]  # handle case where EXIF magic number is not known to PIL/Pillow
+        for x in tmp_exif_dict
+    }
+    #return exif_dict
+    import json
+    #from pprint import pprint
+    #pprint(exif_dict)
+    #del exif_dict['MakerNote']  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+    import base64
+    exif_dict['MakerNote'] = base64.encodestring(exif_dict['MakerNote'])  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+    return json.dumps(exif_dict, indent=4, sort_keys=True)
 
 
 option_accurate_colour_count = False
