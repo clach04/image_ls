@@ -216,25 +216,25 @@ def doit(dir_name):
             #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
             #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
             print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE) + ' ' + exif_dict.get(TAG_MODEL),))
-        print('\t\t\t\t\t%s' % get_exif_original_date(im))
-        #print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
-        #print('\t\t\t\t\t%s' % im._getexif())
-        #print('\t\t\t\t\t%s' % dump_all_exif(im))
-        #print('\t\t\t\t\t%s' % dump_gps_exif(im))
+            print('\t\t\t\t\t%s' % get_exif_original_date(im))
+            #print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
+            #print('\t\t\t\t\t%s' % im._getexif())
+            #print('\t\t\t\t\t%s' % dump_all_exif(im))
+            #print('\t\t\t\t\t%s' % dump_gps_exif(im))
 
-        gps_info = get_exif_gpsinfo(im)
-        if gps_info:
-            """
-            print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
-            print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
-            print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
-            print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
-            print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
-            """
+            gps_info = get_exif_gpsinfo(im)
+            if gps_info:
+                """
+                print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
+                print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                """
 
-            print('\t\t\t\t\t%r' % (
-                (decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]), decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF])),
-                ))
+                print('\t\t\t\t\t%r' % (
+                    (decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]), decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF])),
+                    ))
 
         """
         print('%r' % im)
