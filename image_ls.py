@@ -165,7 +165,6 @@ def image_ls(dir_or_archive_name):
                 tar_member_info = arch.getmember(filename)
                 file_size = tar_member_info.size
             else:
-                file_contents = arch.read(filename)  # read into memory
                 archive_member_info = arch.getinfo(filename)
                 """
                 print('DEBUG %r' % archive_member_info)
@@ -176,7 +175,11 @@ def image_ls(dir_or_archive_name):
                 """
                 #file_size = len(file_contents) ## FIXME lookup metadata from arch
                 file_size = archive_member_info.file_size
+                """
+                file_contents = arch.read(filename)  # read into memory
                 file_ptr = FakeFile(file_contents)
+                """
+                file_ptr = arch.open(filename)
             if filename.startswith('/'):
                 # NOTE unix style path
                 # TODO win too
