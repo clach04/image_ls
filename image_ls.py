@@ -21,6 +21,7 @@ except ImportError:
 try:
     # Pillow and PIL
     import PIL  # http://www.pythonware.com/products/pil/
+    import PIL.ExifTags
     from PIL import Image  # http://www.pythonware.com/products/pil/
     try:
         from PIL import UnidentifiedImageError  # PIL.VERSION missing, PIL.PILLOW_VERSION == '7.1.2'
@@ -114,6 +115,99 @@ try:
 except AttributeError:
     def glob_escape(in_str):
         return in_str  # i.e. not implemented!
+
+
+exif_tag_names_to_numbers = {PIL.ExifTags.TAGS[x]:x for x in PIL.ExifTags.TAGS}
+exif_gps_tag_names_to_numbers = {PIL.ExifTags.GPSTAGS[x]:x for x in PIL.ExifTags.GPSTAGS}
+TAG_DATETIME_ORIGINAL = exif_tag_names_to_numbers['DateTimeOriginal']  # 36867
+TAG_DATETIME_DIGITIZED = exif_tag_names_to_numbers['DateTimeDigitized']  # 36868
+TAG_SUBSECTIME_ORIGINAL = exif_tag_names_to_numbers['SubsecTimeOriginal']  # 37521
+TAG_MAKE = exif_tag_names_to_numbers['Make']
+TAG_MODEL = exif_tag_names_to_numbers['Model']
+TAG_GPSINFO = exif_tag_names_to_numbers['GPSInfo']
+TAG_GPS_GPSLONGITUDEREF = exif_gps_tag_names_to_numbers['GPSLongitudeRef']
+TAG_GPS_GPSLONGITUDE = exif_gps_tag_names_to_numbers['GPSLongitude']
+TAG_GPS_GPSLATITUDEREF = exif_gps_tag_names_to_numbers['GPSLatitudeRef']
+TAG_GPS_GPSLATITUDE = exif_gps_tag_names_to_numbers['GPSLatitude']
+"""
+for x in exif_tag_names_to_numbers:
+    print(x)
+"""
+
+def get_exif_gpsinfo(image):
+    gps_info = image._getexif().get(TAG_GPSINFO)
+    return gps_info
+
+def get_exif_original_date(image):
+    """
+    returns (string of) the DateTimeOriginal/DateTimeDigitized exif data from the given PIL/Pillow Image file
+    """
+    try:
+        # NOTE: using old "private" method because new public method
+        #       doesn't include this tag. It does include 306 "DateTime"
+        #       though, but "DateTime" might differ from "DateTimeOriginal"
+        # pylint: disable-next=protected-access
+        date_created = image._getexif().get(TAG_DATETIME_ORIGINAL)
+        if not date_created:
+            date_created = image._getexif().get(TAG_DATETIME_DIGITIZED)
+        if date_created:
+            date_created = date_created.replace(':', '-', 2)  # replace date (only) seperator
+            # pylint: disable-next=protected-access
+            date_created += "." + image._getexif().get(
+                TAG_SUBSECTIME_ORIGINAL, ""
+            ).zfill(3)
+    except (UnidentifiedImageError, AttributeError):
+        print("unable to parse '%s'", filepath)
+        return None
+
+    return date_created
+
+
+def printable_coords(coords, ref):
+    """
+    GPSLatitude, GPSLatitudeRef
+    GPSLongitude, GPSLongitudeRef
+    """
+    result = u"""%d\u00b0%d'%f"%s""" % ((float(coords[0][0]) / float(coords[0][1])) , (float(coords[1][0]) / float(coords[1][1])), (float(coords[2][0]) / float(coords[2][1])), ref)
+    return result
+
+
+def decimal_coords(coords, ref):
+    """
+    GPSLatitude, GPSLatitudeRef
+    GPSLongitude, GPSLongitudeRef
+    """
+    decimal_degrees = (float(coords[0][0]) / float(coords[0][1]))  + ((float(coords[1][0]) / float(coords[1][1])) / 60 )+ ((float(coords[2][0]) / float(coords[2][1])) / 3600 )
+    if ref == 'S' or ref == 'W':
+        decimal_degrees = -decimal_degrees
+    return decimal_degrees
+
+
+def dump_gps_exif(image):
+    tmp_exif_dict = image._getexif().get(TAG_GPSINFO, {})
+    exif_dict = {
+        PIL.ExifTags.GPSTAGS[x]:tmp_exif_dict[x]
+        for x in tmp_exif_dict
+    }
+    #return exif_dict
+    import json
+    return json.dumps(exif_dict, indent=4)
+
+
+def dump_all_exif(image):
+    tmp_exif_dict = image._getexif()
+    exif_dict = {
+        PIL.ExifTags.TAGS.get(x, x):tmp_exif_dict[x]  # handle case where EXIF magic number is not known to PIL/Pillow
+        for x in tmp_exif_dict
+    }
+    #return exif_dict
+    import json
+    #from pprint import pprint
+    #pprint(exif_dict)
+    #del exif_dict['MakerNote']  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+    import base64
+    exif_dict['MakerNote'] = base64.encodestring(exif_dict['MakerNote'])  # unclear from inspection what this is, after reviewing https://exiv2.org/makernote.html looks like is Vendor dependent (and typically not documented)
+    return json.dumps(exif_dict, indent=4, sort_keys=True)
 
 
 option_accurate_colour_count = False
@@ -215,7 +309,9 @@ def image_ls(dir_or_archive_name):
             format_str = '%4s-%d' % (im.mode, mode_to_bpp[im.mode])
             image_size_str = '%5dx%d' % im.size  # width, height
             im_format = im.format
+            exif_dict = im._getexif()
         except UnidentifiedImageError:
+            im = exif_dict = None
             # FIXME get lengths correct
             image_size_str = ''
             im_format = '???'
@@ -225,6 +321,35 @@ def image_ls(dir_or_archive_name):
         #filename_basename = os.path.basename(filename)  # for zip file, this will hide paths
         filename_basename = filename
         print('%8s %10s %r %7s %s %r' % (bytesize2human_ls_en(file_size), image_size_str, im_format, format_str, colour_count_str, filename_basename))
+        if exif_dict:
+            #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE),))
+            #print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MODEL),))
+            print('\t\t\t\t\t%r' % (exif_dict.get(TAG_MAKE) + ' ' + exif_dict.get(TAG_MODEL),))
+            print('\t\t\t\t\t%s' % get_exif_original_date(im))
+            #print('\t\t\t\t\t%s' % get_exif_gpsinfo(im))
+            #print('\t\t\t\t\t%s' % im._getexif())
+            #print('\t\t\t\t\t%s' % dump_all_exif(im))
+            #print('\t\t\t\t\t%s' % dump_gps_exif(im))
+
+            gps_info = get_exif_gpsinfo(im)
+            if gps_info:
+                try:
+                    #print('\t\t\t\t\t%r' % (gps_info,))
+                    """
+                    print('\t\t\t\t\t%r' % (gps_info[TAG_GPS_GPSLONGITUDE],))
+                    print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                    print('\t\t\t\t\t%s' % printable_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                    print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]))
+                    print('\t\t\t\t\t%r' % decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF]))
+                    """
+
+                    print('\t\t\t\t\t%r' % (
+                        (decimal_coords(gps_info[TAG_GPS_GPSLATITUDE], gps_info[TAG_GPS_GPSLATITUDEREF]), decimal_coords(gps_info[TAG_GPS_GPSLONGITUDE], gps_info[TAG_GPS_GPSLONGITUDEREF])),
+                        ))
+                except KeyError:
+                    pass
+                    # Partial or missing GPS information
+
         file_ptr.close()
         counter += 1
         """
