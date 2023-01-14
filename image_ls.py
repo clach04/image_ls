@@ -36,6 +36,10 @@ try:
     #   rarfile.UNRAR_TOOL - 7z support if unrar not availabke as it can also read some rar files
     #   USE_EXTRACT_HACK
     #   HACK_TMP_DIR and determine if os variable TMP/TEMP impact location
+    #       Test code paths through:
+    #           _open_unrar_membuf()
+    #           _open_unrar()
+    #           _open_hack()
 except (ImportError, SyntaxError):
     is_rarfile = RarFile = None
 #from rarfile import RarFile  # rarfile from Mangle doesn't support recent RAR5 file formats
