@@ -6,6 +6,7 @@
 import glob
 import os
 import sys
+from tarfile import is_tarfile, TarFile
 from zipfile import is_zipfile, ZipFile
 
 try:
@@ -132,8 +133,13 @@ def image_ls(dir_or_archive_name):
             arch = ZipFile(archive_filename, 'r')
         elif is_rarfile and is_rarfile(archive_filename):
             arch = RarFile(archive_filename, 'r')
+        elif is_tarfile(archive_filename):
+            arch = TarFile(archive_filename, 'r')
         else:
             raise NotImplementedError('Unknown file (archive) format for %r' % archive_filename)
+        if isinstance(arch, TarFile):
+            # stupid non-conforming tarfile API...
+            arch.namelist = arch.getnames  # Monkey patch in zipfile/rarfile like list function
         file_list = arch.namelist()
         file_list.sort()  # TODO natsort file_list
 
@@ -153,9 +159,15 @@ def image_ls(dir_or_archive_name):
             if filename.endswith('/'):
                 # skip directories (TODO consider displaying them?)
                 continue
-            file_contents = arch.read(filename)  # read into memory
-            file_size = len(file_contents) ## FIXME lookup metadata from arch
-            file_ptr = FakeFile(file_contents)
+            if isinstance(arch, TarFile):
+                # stupid non-conforming tarfile API...
+                file_ptr = arch.extractfile(filename)
+                tar_member_info = arch.getmember(filename)
+                file_size = tar_member_info.size
+            else:
+                file_contents = arch.read(filename)  # read into memory
+                file_size = len(file_contents) ## FIXME lookup metadata from arch
+                file_ptr = FakeFile(file_contents)
             if filename.startswith('/'):
                 # NOTE unix style path
                 # TODO win too
