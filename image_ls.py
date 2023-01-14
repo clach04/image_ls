@@ -6,7 +6,7 @@
 import glob
 import os
 import sys
-from zipfile import ZipFile
+from zipfile import is_zipfile, ZipFile
 
 try:
     from cStringIO import StringIO as FakeFile
@@ -87,9 +87,12 @@ def image_ls(dir_or_archive_name):
         # Assume a zip (archive) file
         is_dir = False
         is_archive = True
-        zip_filename = os.path.abspath(dir_or_archive_name)
-        print(repr(zip_filename))
-        arch = ZipFile(zip_filename, 'r')
+        archive_filename = os.path.abspath(dir_or_archive_name)
+        print(repr(archive_filename))
+        if is_zipfile(archive_filename):
+            arch = ZipFile(archive_filename, 'r')
+        else:
+            raise NotImplementedError('Unknown file (archive) format for %r' % archive_filename)
         file_list = arch.namelist()
         file_list.sort()  # TODO natsort file_list
 
