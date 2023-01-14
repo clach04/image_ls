@@ -28,6 +28,41 @@ try:
 except ImportError:
     import Image  # Older namespace - http://www.pythonware.com/products/pil/
 
+
+try:
+    from rarfile import is_rarfile, RarFile  # py3 ONLY https://github.com/markokr/rarfile.git
+except (ImportError, SyntaxError):
+    is_rarfile = RarFile = None
+#from rarfile import RarFile  # rarfile from Mangle doesn't support recent RAR file formats
+#from rar import is_rarfile, RarFile  # not py3 compat and fails with one of my sample media files
+"""
+import rarfile
+
+# Set to full path of unrar.exe if it is not in PATH
+#rarfile.UNRAR_TOOL = "unrar"
+
+# Set to 0 if you don't look at comments and want to
+# avoid wasting time for parsing them
+rarfile.NEED_COMMENTS = 0
+
+# Set up to 1 if you don't want to deal with decoding comments
+# from unknown encoding.  rarfile will try couple of common
+# encodings in sequence.
+rarfile.UNICODE_COMMENTS = 0
+
+my_RAR_ID = rarfile.RAR_ID[:-1]  # skip last byte
+def my_is_rarfile(fn):
+    '''Check quickly whether file is rar archive.'''
+    buf = open(fn, "rb").read(len(my_RAR_ID))
+    if buf != my_RAR_ID :
+        print('DEBUG buf %r my_RAR_ID %r same %r', (buf, my_RAR_ID, buf == my_RAR_ID))
+        for x in range(len(buf)):
+                print(x, buf[x]  == my_RAR_ID[x])
+    return buf == my_RAR_ID
+
+#rarfile.RAR_ID = my_RAR_ID  # monkey patch, so as to hack _parse_real()
+"""
+
 """
 class UnidentifiedImageError (OSError):
 	pass
@@ -91,6 +126,8 @@ def image_ls(dir_or_archive_name):
         print(repr(archive_filename))
         if is_zipfile(archive_filename):
             arch = ZipFile(archive_filename, 'r')
+        elif is_rarfile and is_rarfile(archive_filename):
+            arch = RarFile(archive_filename, 'r')
         else:
             raise NotImplementedError('Unknown file (archive) format for %r' % archive_filename)
         file_list = arch.namelist()
