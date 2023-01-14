@@ -33,8 +33,8 @@ try:
     from rarfile import is_rarfile, RarFile  # py3 ONLY https://github.com/markokr/rarfile.git
 except (ImportError, SyntaxError):
     is_rarfile = RarFile = None
-#from rarfile import RarFile  # rarfile from Mangle doesn't support recent RAR file formats
-#from rar import is_rarfile, RarFile  # not py3 compat and fails with one of my sample media files
+#from rarfile import RarFile  # rarfile from Mangle doesn't support recent RAR5 file formats
+#from rar import is_rarfile, RarFile  # not py3 compat and fails with one of my sample RAR5 media files
 """
 import rarfile
 
