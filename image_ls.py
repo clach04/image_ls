@@ -31,6 +31,10 @@ except ImportError:
 
 try:
     from rarfile import is_rarfile, RarFile  # py3 ONLY https://github.com/markokr/rarfile.git
+    # TODO Consider making use of:
+    #   rarfile.UNRAR_TOOL - 7z support if unrar not availabke as it can also read some rar files
+    #   USE_EXTRACT_HACK
+    #   HACK_TMP_DIR and determine if os variable TMP/TEMP impact location
 except (ImportError, SyntaxError):
     is_rarfile = RarFile = None
 #from rarfile import RarFile  # rarfile from Mangle doesn't support recent RAR5 file formats
