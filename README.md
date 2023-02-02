@@ -1,10 +1,16 @@
 # image_ls
 
 Python 3 and 2 command line tool to dump out simple meta data about images.
+Works with directories of images and; tar (CBT), zip (CBZ), rar (CBR) archives.
+NOTE rarfile support is python3 only
 
 ## Get started
 
     python -m pip install -r requirements.txt
+
+For Python 3 and rar support:
+
+    python -m pip install rarfile  # https://github.com/markokr/rarfile
 
     python image_ls.py
     python image_ls.py /some/path
@@ -17,6 +23,7 @@ Python 3 and 2 command line tool to dump out simple meta data about images.
 Alternatively, install os packages instead of PyPi packages
 
     sudo apt install python3-pillow
+
 
 
 ### Example
@@ -46,4 +53,37 @@ Output:
       257.7K   975x1320 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__1.jpg'
       256.1K   975x1351 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__2.jpg'
       294.9K   975x1326 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__3.jpg'
+    4 files
+
+Same output for images in directory as for comic versions; CBZ, CBT, CBR:
+
+    $ python3 ./image_ls.py sample_reading_media/bobby_make_believe_sample.cbz
+    Python 3.6.9 (default, Nov 25 2022, 14:10:45)
+    [GCC 8.4.0] on linux
+    '...sample_reading_media/bobby_make_believe_sample.cbz'
+        size        res   fmt   depth #col filename
+      280.1K   975x1349 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__0.jpg'
+      257.7K   975x1320 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__1.jpg'
+      256.1K   975x1351 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__2.jpg'
+      294.9K   975x1326 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__3.jpg'
+    4 files
+    $ python3 ./image_ls.py sample_reading_media/bobby_make_believe_sample.cbt
+    Python 3.6.9 (default, Nov 25 2022, 14:10:45)
+    [GCC 8.4.0] on linux
+    '...sample_reading_media/bobby_make_believe_sample.cbt'
+        size        res   fmt   depth #col filename
+      280.1K   975x1349 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__0.jpg'
+      257.7K   975x1320 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__1.jpg'
+      256.1K   975x1351 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__2.jpg'
+      294.9K   975x1326 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__3.jpg'
+    4 files
+    $ python3 ./image_ls.py sample_reading_media/bobby_make_believe_sample.cbr
+    Python 3.6.9 (default, Nov 25 2022, 14:10:45)
+    [GCC 8.4.0] on linux
+    '...sample_reading_media/bobby_make_believe_sample.cbr'
+        size        res   fmt   depth #col filename
+      280.1K   975x1349 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__0.jpg'
+      257.7K   975x1320 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__1.jpg'
+      256.1K   975x1351 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__2.jpg'
+      294.9K   975x1326 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__3.jpg'
     4 files
