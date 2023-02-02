@@ -29,12 +29,12 @@ Sample media:
 
 Download and run:
 
-	wget https://github.com/clach04/sample_reading_media/releases/download/v0.2/sample_reading_media.zip
-	mkdir sample_reading_media
-	cd sample_reading_media
-	unzip ../sample_reading_media.zip
-	cd ..
-	python3 ./image_ls.py sample_reading_media/images/*
+    wget https://github.com/clach04/sample_reading_media/releases/download/v0.2/sample_reading_media.zip
+    mkdir sample_reading_media
+    cd sample_reading_media
+    unzip ../sample_reading_media.zip
+    cd ..
+    python3 ./image_ls.py sample_reading_media/images/*
 
 Output:
 
