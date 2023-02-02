@@ -16,7 +16,7 @@ Python 3 and 2 command line tool to dump out simple meta data about images.
 
 Alternatively, install os packages instead of PyPi packages
 
-	sudo apt install python3-pillow
+    sudo apt install python3-pillow
 
 
 ### Example
@@ -24,7 +24,7 @@ Alternatively, install os packages instead of PyPi packages
 Sample media:
 
   * https://github.com/clach04/sample_reading_media/tree/main/images/bobby_make_believe
-	* https://github.com/clach04/sample_reading_media/releases/tag/v0.2
+    * https://github.com/clach04/sample_reading_media/releases/tag/v0.2
   * https://github.com/recurser/exif-orientation-examples
 
 Download and run:
@@ -38,12 +38,12 @@ Download and run:
 
 Output:
 
-	Python 3.6.9 (default, Jan 26 2021, 15:33:00)
-	[GCC 8.4.0] on linux
-	'....../image_ls/sample_reading_media/images/bobby_make_believe'
-	    size        res   fmt   depth #col filename
-	  280.1K   975x1349 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__0.jpg'
-	  257.7K   975x1320 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__1.jpg'
-	  256.1K   975x1351 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__2.jpg'
-	  294.9K   975x1326 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__3.jpg'
-	4 files
+    Python 3.6.9 (default, Jan 26 2021, 15:33:00)
+    [GCC 8.4.0] on linux
+    '....../image_ls/sample_reading_media/images/bobby_make_believe'
+        size        res   fmt   depth #col filename
+      280.1K   975x1349 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__0.jpg'
+      257.7K   975x1320 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__1.jpg'
+      256.1K   975x1351 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__2.jpg'
+      294.9K   975x1326 'JPEG'  RGB-24  256 'Bobby-Make-Believe_1915__3.jpg'
+    4 files
