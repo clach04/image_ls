@@ -87,3 +87,7 @@ Same output for images in directory as for comic versions; CBZ, CBT, CBR:
       256.1K   975x1351 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__2.jpg'
       294.9K   975x1326 'JPEG'  RGB-24 >999 'Bobby-Make-Believe_1915__3.jpg'
     4 files
+
+## Similar Tools
+
+  * https://github.com/bitbank2/imageinfo - probably faster, no zip support and limited file type support
